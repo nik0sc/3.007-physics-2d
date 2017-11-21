@@ -15,7 +15,7 @@ def read_csv(f):
     # each cell is actually a tuple of coordinates
     arr = [[eval(cell) for cell in row] for row in csv_reader]
 
-    return numpy.array(arr)
+    return np.array(arr)
 
 
 def divide_line(a, b, steps):
@@ -36,9 +36,9 @@ def divide_line(a, b, steps):
     
 def distance(a, b=None):
     if b is not None:
-        return numpy.linalg.norm(a - b)
+        return np.linalg.norm(a - b)
     else:
-        return numpy.linalg.norm(a)
+        return np.linalg.norm(a)
 
 def find_rod_icm(start, end, steps):
     '''Find the moment of inertia of a rod *from the origin*, assuming line density = 1.
@@ -56,7 +56,7 @@ def find_rod_icm(start, end, steps):
     # with each element, sum the square of distances (which is just the sum of squares of coordinate componenents)
     icm = 0
     for element in element_genr:
-        icm += numpy.sum(numpy.square(element))
+        icm += np.sum(np.square(element))
     
     icm *= delta_s
     
@@ -64,4 +64,9 @@ def find_rod_icm(start, end, steps):
     
     return icm
     
-def find_total_icm(
+def find_total_icm(snapshot, steps):
+    '''Find the total moment of inertia for one snapshot in time.
+    
+    snapshot should be a two-dimensional array of coordinates p_1 to p_7.
+    '''
+    pass
