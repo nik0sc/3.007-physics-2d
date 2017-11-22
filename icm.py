@@ -4,8 +4,6 @@ import csv
 import itertools as it
 import functools as ft
 
-debug = True
-
 def read_csv(f):
     '''Read coordinate data from file object f and create numpy arrays.
     
@@ -66,7 +64,7 @@ def find_rod_icm(start, end, steps):
     
     return icm
     
-def find_total_icm(snapshot, steps):
+def find_total_icm(snapshot, steps, print_lengths=False):
     '''Find the total moment of inertia for one snapshot in time.
     
     snapshot should be a two-dimensional array of coordinates p_1 to p_7.
@@ -83,7 +81,7 @@ def find_total_icm(snapshot, steps):
     # potential mutability errors
     snapshot = np.insert(snapshot, 0, np.array([[0, 0]]), axis=0)
     
-    if debug:
+    if print_lengths:
         for a, b in link_between:
             print('Length between {0} and {1}: {2}'.format(
                 a,
@@ -95,4 +93,26 @@ def find_total_icm(snapshot, steps):
                        for a, b in link_between)
     
     return snapshot_icm
-                     
+
+def report(filename, steps, line_dens, break_at=None):
+    '''Open filename as csv, calculate moment of inertia with number of steps per link, multiplying the whole thing by the line density line_dens.
+    '''
+    
+    with open(filename) as f:
+        coords = read_csv(f)
+    icms = []
+    print_lengths = True
+    for i, snapshot in enumerate(coords):
+        if break_at is not None and i == break_at:
+            break
+        
+        icms.append(find_total_icm(snapshot, steps, print_lengths))
+        print_lengths = False
+        
+        if i % 10 == 0:
+            print("Finished snapshot index {0}".format(i))
+    
+    icms = np.array(icms)
+    icms *= line_dens
+    
+    return icms
