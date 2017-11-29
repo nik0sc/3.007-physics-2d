@@ -5,7 +5,7 @@ import itertools as it
 import functools as ft
 import util
 
-def snapshot_cm_individual(snapshot):
+def find_snapshot_cm(snapshot):
     '''Find centre of mass of snapshot
     '''
     link_between = [(0, 1), (1, 2), (1, 6), (2, 3), (3, 4), (2, 4),
@@ -31,3 +31,22 @@ def snapshot_cm_individual(snapshot):
     assert masses.shape == (11,), "%s" % repr(masses.shape)
     
     return np.sum(midpoints[i] * masses[i] for i in range(11)) / sum(masses)
+    
+def report(filename, break_at=None):
+    '''Open filename as csv, calculate centre of mass
+    '''
+    
+    with open(filename) as f:
+        coords = util.read_csv(f)
+    centres_of_mass = []
+
+    for i, snapshot in enumerate(coords):
+        if break_at is not None and i == break_at:
+            break
+        
+        centres_of_mass.append(find_snapshot_cm(snapshot))
+        
+        if i % 10 == 0:
+            print("Finished snapshot index {0}".format(i))
+    
+    return centres_of_mass
